@@ -8,15 +8,26 @@ function App() {
   const [subject, setSubject] = useState('');
   const [response, setResponse] = useState('');
   const [showResponse, setShowResponse] = useState(false);
-  const nodeRef = useRef(null); 
-  
-  const handleSubmit = (e) => {
+  const nodeRef = useRef(null);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const dummyResponse = `Réponse générée pour : ${subject}`;
-    setResponse(dummyResponse);
-    setShowResponse(true);
-    toast.success('Réponse générée avec succès !');
-    setSubject('');
+    try {
+      const res = await fetch('http://localhost:5000/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject })
+      });
+      if (!res.ok) throw new Error('Erreur lors de la soumission');
+      const data = await res.json();
+      setResponse(data.response);
+      setShowResponse(true);
+      toast.success('Réponse générée avec succès !');
+      setSubject('');
+    } catch (error) {
+      console.error(error);
+      toast.error("Erreur lors de la communication avec le back-end");
+    }
   };
 
   return (
