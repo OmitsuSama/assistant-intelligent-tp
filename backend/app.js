@@ -1,9 +1,12 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 5000;
 require('dotenv').config();
 
 const { generateResponse } = require('./openai');
+
+app.use(cors({ origin: 'http://localhost:3000' }));
 
 app.use(express.json());
 
